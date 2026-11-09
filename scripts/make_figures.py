@@ -27,6 +27,9 @@ GRID, LINE, MUTED = "#e3e6ee", "#b9bfcc", "#5d6678"
 FONT = "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
 
 
+TOP_LEGEND = {"font": {"size": 11}, "orientation": "h", "x": 0, "y": 1.02, "yanchor": "bottom", "xanchor": "left"}
+
+
 def axis(**kw):
     return {"gridcolor": GRID, "linecolor": LINE, "zeroline": False, **kw}
 
@@ -66,7 +69,7 @@ fig.add_trace(go.Scatter(x=[10, 100_000], y=pct([p, p]), mode="lines", line={"co
 fig.add_vline(x=1000, line={"color": LINE, "width": 1, "dash": "dot"})
 fig.add_annotation(x=np.log10(1000), y=19, xref="x", yref="y", text="1,000 runs", showarrow=False,
                    font={"size": 11, "color": MUTED}, xanchor="left", xshift=4)
-fig.update_layout(base_layout(470, xaxis=axis(type="log", title={"text": "Number of simulated retirements (log scale)"},
+fig.update_layout(base_layout(470, xaxis=axis(type="log", title={"text": "Simulated retirements (log scale)"},
                                                 tickvals=[10, 100, 1000, 10000, 100000],
                                                 ticktext=["10", "100", "1,000", "10,000", "100,000"]),
                               yaxis=axis(title={"text": "Estimated chance the money runs out"}, ticksuffix="%",
@@ -91,7 +94,7 @@ fig.update_layout(base_layout(560, bargap=0.05, margin={"l": 64, "r": 16, "t": 2
 for r in (1, 2, 3):
     fig.update_yaxes(axis(ticksuffix="%"), row=r, col=1)
     fig.update_xaxes(axis(ticksuffix="%", range=[0, 16]), row=r, col=1)
-fig.update_xaxes(title={"text": "Estimated chance the money runs out, in each of 2,000 repeated runs"}, row=3, col=1)
+fig.update_xaxes(title={"text": "Estimate in each of 2,000 repeated runs"}, row=3, col=1)
 fig.update_yaxes(title={"text": "Share of runs"}, row=2, col=1)
 save(fig, "02-sampling-distribution")
 
@@ -110,11 +113,10 @@ for key, name, c in series:
                              hovertemplate=name + "<br>N = %{x:,}: ±%{y:.1f}% of the true value<extra></extra>"))
 fig.add_trace(go.Scatter(x=[100, 100000], y=[10, 10], mode="lines", line={"color": LINE, "dash": "dot"},
                          name="±10% target", hoverinfo="skip"))
-fig.update_layout(base_layout(520, legend={"font": {"size": 11}, "orientation": "v", "x": 1, "xanchor": "right", "y": 1,
-                                           "bgcolor": "rgba(255,255,255,0.85)"},
-                              xaxis=axis(type="log", title={"text": "Number of simulated retirements (log scale)"},
+fig.update_layout(base_layout(520, legend=TOP_LEGEND,
+                              xaxis=axis(type="log", title={"text": "Simulated retirements (log scale)"},
                                          tickvals=[100, 1000, 10000, 100000], ticktext=["100", "1,000", "10,000", "100,000"]),
-                              yaxis=axis(type="log", title={"text": "95% error, as a share of the true value"},
+                              yaxis=axis(type="log", title={"text": "95% error, share of true value"},
                                          tickvals=[1, 3, 10, 30, 100, 300], ticktext=["1%", "3%", "10%", "30%", "100%", "300%"])))
 save(fig, "03-error-by-question")
 
@@ -133,9 +135,8 @@ fig.add_trace(go.Scatter(x=[100 * m for m, _ in marks], y=[stats.n_for_prob_rel(
                          text=[t for _, t in marks], textposition="top right", marker={"color": NAVY, "size": 8},
                          textfont={"size": 11, "color": NAVY}, showlegend=False,
                          hovertemplate="%{text}: p = %{x:.2f}%<br>±10% needs %{y:,.0f} runs<extra></extra>"))
-fig.update_layout(base_layout(500, legend={"font": {"size": 11}, "orientation": "v", "x": 1, "xanchor": "right", "y": 1,
-                                           "bgcolor": "rgba(255,255,255,0.85)"},
-                              xaxis=axis(type="log", title={"text": "How likely the event is, p (log scale)"},
+fig.update_layout(base_layout(500, legend=TOP_LEGEND,
+                              xaxis=axis(type="log", title={"text": "Probability of the event, p (log scale)"},
                                          tickvals=[0.01, 0.1, 1, 10, 50], ticktext=["0.01%", "0.1%", "1%", "10%", "50%"]),
                               yaxis=axis(type="log", title={"text": "Runs needed for 95% confidence"},
                                          tickvals=[100, 1e3, 1e4, 1e5, 1e6, 1e7],
@@ -149,8 +150,8 @@ labels = {"fixed": "Fixed 10,000 runs", "pilot": "Pilot run, then formula", "nai
 colors = {"fixed": ORANGE, "pilot": GOLD, "naive": RED, "inverse": TEAL}
 cats = ["50%", "10%", "1%", "0.1%"]
 fig = make_subplots(rows=2, cols=1, vertical_spacing=0.14,
-                    subplot_titles=["Coverage: how often the 95% interval contains the true value",
-                                    "Share of estimates within ±10% of the true value"])
+                    subplot_titles=["95% interval contains the true value",
+                                    "Estimate within ±10% of the true value"])
 for rule in ["fixed", "pilot", "naive", "inverse"]:
     d = e5[e5.rule == rule].sort_values("p", ascending=False)
     custom = np.c_[d.mean_n, pct(d.share_zero)]
@@ -172,7 +173,7 @@ fig.update_yaxes(axis(ticksuffix="%", range=[0, 102]), row=1, col=1)
 fig.update_yaxes(axis(ticksuffix="%", range=[0, 102]), row=2, col=1)
 fig.update_xaxes(axis(), row=1, col=1)
 fig.update_xaxes(axis(title={"text": "True probability of the event"}), row=2, col=1)
-save(fig, "05-stopping-rules")
+save(fig, "06-stopping-rules")
 
 # ---- F6 model error versus simulation error --------------------------------------------------------------------------
 e6 = pd.read_csv(RES / "e6_model_error.csv")
@@ -190,10 +191,10 @@ for j, m in enumerate(["iid", "block", "lognormal", "historical"]):
                              customdata=np.c_[pct(d.lo), pct(d.hi), d.n],
                              hovertemplate=mlabel[m] + "<br>%{y:.2f}% (95% interval %{customdata[0]:.2f}% to %{customdata[1]:.2f}%)"
                                            "<br>based on %{customdata[2]:,} retirements<extra></extra>"))
-fig.update_layout(base_layout(480, legend={"font": {"size": 11}, "orientation": "v", "x": 0, "y": 1, "bgcolor": "rgba(255,255,255,0.85)"},
+fig.update_layout(base_layout(480, legend=TOP_LEGEND,
                               xaxis=axis(tickvals=[0, 1, 2], ticktext=["Withdraw 3.5% a year", "4%", "4.5%"], range=[-0.5, 2.5]),
                               yaxis=axis(title={"text": "Chance the money runs out within 30 years"}, ticksuffix="%", rangemode="tozero")))
-save(fig, "06-model-error")
+save(fig, "08-model-error")
 
 # ---- F7 cost versus accuracy -----------------------------------------------------------------------------------------
 e7 = pd.read_csv(RES / "e7_variance_reduction.csv")
@@ -215,12 +216,11 @@ for _, r in e7.iterrows():
                              hovertemplate=vlabel[m] + "<br>one run, %{x:.3g} s: off by %{y:.1f}%<extra></extra>"))
 fig.add_trace(go.Scatter(x=[1e-4, 1e2], y=[10, 10], mode="lines", line={"color": LINE, "dash": "dot"}, name="±10% target",
                          hoverinfo="skip"))
-fig.update_layout(base_layout(500, legend={"font": {"size": 11}, "orientation": "v", "x": 1, "xanchor": "right", "y": 1,
-                                           "bgcolor": "rgba(255,255,255,0.85)"},
-                              xaxis=axis(type="log", title={"text": "Computing time in seconds (log scale)"}, range=[-4, 2],
+fig.update_layout(base_layout(500, legend=TOP_LEGEND,
+                              xaxis=axis(type="log", title={"text": "Computing time, seconds (log scale)"}, range=[-4, 2],
                                          tickvals=[1e-4, 1e-3, 0.01, 0.1, 1, 10, 100],
                                          ticktext=["0.0001", "0.001", "0.01", "0.1", "1", "10", "100"]),
-                              yaxis=axis(type="log", title={"text": "Error, as a share of the true probability"},
+                              yaxis=axis(type="log", title={"text": "Error, share of true probability"},
                                          tickvals=[0.3, 1, 3, 10, 30, 100, 300], ticktext=["0.3%", "1%", "3%", "10%", "30%", "100%", "300%"],
                                          range=[np.log10(0.2), np.log10(400)])))
 save(fig, "07-cost-vs-accuracy")
@@ -236,10 +236,9 @@ fig.add_trace(go.Scatter(x=e8.n, y=pct(e8.half_same), mode="lines", line={"color
                          name="Both plans on the same scenarios", hovertemplate="N = %{x:,}: ±%{y:.2f} points<extra></extra>"))
 fig.add_trace(go.Scatter(x=[100, 1e6], y=[diff, diff], mode="lines", line={"color": NAVY, "dash": "dash", "width": 1.3},
                          name=f"True difference ({diff:.1f} points)", hoverinfo="skip"))
-fig.update_layout(base_layout(460, legend={"font": {"size": 11}, "orientation": "v", "x": 1, "xanchor": "right", "y": 1,
-                                           "bgcolor": "rgba(255,255,255,0.85)"},
-                              xaxis=axis(type="log", title={"text": "Simulated retirements per plan (log scale)"},
+fig.update_layout(base_layout(460, legend=TOP_LEGEND,
+                              xaxis=axis(type="log", title={"text": "Retirements per plan (log scale)"},
                                          tickvals=[100, 1e3, 1e4, 1e5, 1e6], ticktext=["100", "1,000", "10,000", "100,000", "1 million"]),
-                              yaxis=axis(type="log", title={"text": "95% error of the difference (percentage points)"},
+                              yaxis=axis(type="log", title={"text": "95% error of difference (points)"},
                                          tickvals=[0.03, 0.1, 0.3, 1, 3, 10], ticktext=["0.03", "0.1", "0.3", "1", "3", "10"])))
-save(fig, "08-close-plans")
+save(fig, "05-close-plans")
