@@ -99,3 +99,9 @@ def test_naive_sequential_rule_stops_at_zero_for_rare_events():
     res = rules.run_rule("naive", 0.001, 2000, np.random.default_rng(7))
     s = rules.summarize(res, 0.001)
     assert s["share_zero"] > 0.8 and s["coverage"] < 0.2
+
+
+def test_within_target_includes_the_boundary_counts():
+    # p = 0.001, n = 10,000: counts 9, 10 and 11 are all within 10% of the expected 10
+    res = {"n": np.array([10_000] * 3), "est": np.array([9, 10, 11]) / 10_000, "lo": np.zeros(3), "hi": np.ones(3)}
+    assert rules.summarize(res, 0.001)["within_target"] == 1.0

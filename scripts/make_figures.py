@@ -129,7 +129,7 @@ for col, name, c in [("rel_5", "within ±5% of p", PURPLE), ("rel_10", "within �
 fig.add_trace(go.Scatter(x=pct(e4.p), y=e4.rule_abs_001, mode="lines", line={"color": ORANGE, "dash": "dash"},
                          name="Rule of thumb for ±0.01 (10,000 runs)", hoverinfo="skip"))
 marks = [(S["withdrawal_reference"]["p_fail"]["0.04"], "4% plan"), (S["withdrawal_reference"]["p_fail"]["0.03"], "3% plan"),
-         (S["leverage_rare"]["p_ref"], "3× fund loses 90%")]
+         (S["leverage_rare"]["p_ref"], "3× fund ends year down 90%")]
 
 fig.add_trace(go.Scatter(x=[100 * m for m, _ in marks], y=[stats.n_for_prob_rel(m, 0.1) for m, _ in marks], mode="markers+text",
                          text=[t for _, t in marks], textposition="top right", marker={"color": NAVY, "size": 8},

@@ -13,7 +13,7 @@ right, when it wastes runs, and when it fails. Every number and figure in the ar
 |---|---|
 | `mcsize/stats.py` | Confidence intervals (mean, Wald, Wilson, quantile, Expected Shortfall) and run-count formulas |
 | `mcsize/withdrawal.py` | The main example: does a 4% withdrawal plan last 30 years? Four ways to generate return scenarios |
-| `mcsize/leverage.py` | The rare event: a daily-reset 3× fund losing 90% in a year; plain simulation and three variance-reduction estimators |
+| `mcsize/leverage.py` | The rare event: a daily-reset 3× fund ending the year down 90% or more; plain simulation and three variance-reduction estimators |
 | `mcsize/rules.py` | Four stopping rules and the coverage experiment |
 | `mcsize/data.py` | Real annual returns from Robert Shiller's monthly data |
 | `scripts/prepare_data.py` | Rebuilds `data/annual_real_returns.csv` from the raw file (checks its SHA-256) |

@@ -82,7 +82,8 @@ def run_rule(rule: str, p: float, reps: int, rng: np.random.Generator, max_n: in
 
 def summarize(res: dict[str, np.ndarray], p: float, rel: float = REL) -> dict[str, float]:
     covered = (res["lo"] <= p) & (p <= res["hi"])
-    within = np.abs(res["est"] - p) <= rel * p
+    # small tolerance: in floating point |k/n - p| / p can come out as 0.10000000000000005 exactly at the boundary
+    within = np.abs(res["est"] - p) <= rel * p * (1 + 1e-9)
     return {"coverage": float(covered.mean()), "within_target": float(within.mean()),
             "mean_n": float(res["n"].mean()), "median_n": float(np.median(res["n"])),
             "share_zero": float((res["est"] == 0).mean()),
